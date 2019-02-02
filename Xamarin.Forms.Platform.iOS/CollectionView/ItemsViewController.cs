@@ -8,9 +8,8 @@ namespace Xamarin.Forms.Platform.iOS
 	// TODO hartez 2018/06/01 14:21:24 Add a method for updating the layout	
 	public class ItemsViewController : UICollectionViewController
 	{
-		IItemsViewSource _itemsSource;
 		readonly ItemsView _itemsView;
-		ItemsViewLayout _layout;
+		readonly ItemsViewLayout _layout;
 		bool _initialConstraintsSet;
 		bool _wasEmpty;
 		bool _currentBackgroundIsEmptyView;
@@ -20,11 +19,12 @@ namespace Xamarin.Forms.Platform.iOS
 		VisualElement _emptyViewFormsElement;
 
 		protected UICollectionViewDelegator Delegator { get; set; }
+		protected IItemsViewSource ItemsSource { get; set; }
 
 		public ItemsViewController(ItemsView itemsView, ItemsViewLayout layout) : base(layout)
 		{
 			_itemsView = itemsView;
-			_itemsSource = ItemsSourceFactory.Create(_itemsView.ItemsSource, CollectionView);
+			ItemsSource = ItemsSourceFactory.Create(_itemsView.ItemsSource, CollectionView);
 
 			UpdateLayout(layout);
 		}
@@ -73,7 +73,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public override nint GetItemsCount(UICollectionView collectionView, nint section)
 		{
-			var count = _itemsSource.Count;
+			var count = ItemsSource.Count;
 
 			if (_wasEmpty && count > 0)
 			{
@@ -113,14 +113,14 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public virtual void UpdateItemsSource()
 		{
-			_itemsSource =  ItemsSourceFactory.Create(_itemsView.ItemsSource, CollectionView);
+			ItemsSource =  ItemsSourceFactory.Create(_itemsView.ItemsSource, CollectionView);
 			CollectionView.ReloadData();
 			CollectionView.CollectionViewLayout.InvalidateLayout();
 		}
 
 		protected virtual void UpdateDefaultCell(DefaultCell cell, NSIndexPath indexPath)
 		{
-			cell.Label.Text = _itemsSource[indexPath.Row].ToString();
+			cell.Label.Text = ItemsSource[indexPath.Row].ToString();
 
 			if (cell is ItemsViewCell constrainedCell)
 			{
@@ -140,9 +140,9 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public virtual NSIndexPath GetIndexForItem(object item)
 		{
-			for (int n = 0; n < _itemsSource.Count; n++)
+			for (int n = 0; n < ItemsSource.Count; n++)
 			{
-				if (_itemsSource[n] == item)
+				if (ItemsSource[n] == item)
 				{
 					return NSIndexPath.Create(0, n);
 				}
@@ -153,7 +153,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		protected object GetItemAtIndex(NSIndexPath index)
 		{
-			return _itemsSource[index.Row];
+			return ItemsSource[index.Row];
 		}
 
 		void ApplyTemplateAndDataContext(TemplatedCell cell, NSIndexPath indexPath)
@@ -207,7 +207,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		UICollectionViewCell GetPrototype()
 		{
-			if (_itemsSource.Count == 0)
+			if (ItemsSource.Count == 0)
 			{
 				return null;
 			}
