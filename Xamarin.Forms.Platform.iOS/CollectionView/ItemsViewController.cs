@@ -8,7 +8,6 @@ namespace Xamarin.Forms.Platform.iOS
 	// TODO hartez 2018/06/01 14:21:24 Add a method for updating the layout	
 	public class ItemsViewController : UICollectionViewController
 	{
-		readonly ItemsView _itemsView;
 		readonly ItemsViewLayout _layout;
 		bool _initialConstraintsSet;
 		bool _wasEmpty;
@@ -21,9 +20,11 @@ namespace Xamarin.Forms.Platform.iOS
 		protected UICollectionViewDelegator Delegator { get; set; }
 		protected IItemsViewSource ItemsSource { get; set; }
 
+		public ItemsView ItemsView { get; }
+
 		public ItemsViewController(ItemsView itemsView, ItemsViewLayout layout) : base(layout)
 		{
-			_itemsView = itemsView;
+			ItemsView = itemsView;
 			ItemsSource = ItemsSourceFactory.Create(_itemsView.ItemsSource, CollectionView);
 
 			UpdateLayout(layout);
@@ -111,9 +112,14 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 		}
 
+		protected virtual IItemsViewSource CreateItemsViewSource()
+		{
+			return ItemsSourceFactory.Create(ItemsView.ItemsSource, CollectionView);
+		}
+
 		public virtual void UpdateItemsSource()
 		{
-			ItemsSource =  ItemsSourceFactory.Create(_itemsView.ItemsSource, CollectionView);
+			ItemsSource = CreateItemsViewSource();
 			CollectionView.ReloadData();
 			CollectionView.CollectionViewLayout.InvalidateLayout();
 		}
@@ -193,7 +199,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 		string DetermineCellReusedId()
 		{
-			if (_itemsView.ItemTemplate != null)
+			if (ItemsView.ItemTemplate != null)
 			{
 				return _layout.ScrollDirection == UICollectionViewScrollDirection.Horizontal
 					? HorizontalTemplatedCell.ReuseId
@@ -229,7 +235,7 @@ namespace Xamarin.Forms.Platform.iOS
 		internal void UpdateEmptyView()
 		{
 			// Is EmptyView set on the ItemsView?
-			var emptyView = _itemsView?.EmptyView;
+			var emptyView = ItemsView?.EmptyView;
 
 			if (emptyView == null)
 			{
@@ -241,7 +247,7 @@ namespace Xamarin.Forms.Platform.iOS
 			{
 				// Create the native renderer for the EmptyView, and keep the actual Forms element (if any)
 				// around for updating the layout later
-				var (NativeView, FormsElement) = RealizeEmptyView(emptyView, _itemsView.EmptyViewTemplate);
+				var (NativeView, FormsElement) = RealizeEmptyView(emptyView, ItemsView.EmptyViewTemplate);
 				_emptyUIView = NativeView;
 				_emptyViewFormsElement = FormsElement;
 			}
