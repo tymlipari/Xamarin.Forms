@@ -115,6 +115,7 @@
     <Compile Include="CollectionView\CollectionViewRenderer.cs" />
     <Compile Include="CollectionView\EmptySource.cs" />
     <Compile Include="CollectionView\GroupableItemsViewController.cs" />
+    <Compile Include="CollectionView\GroupableItemsViewRenderer.cs" />
     <Compile Include="CollectionView\HorizontalDefaultSupplementalView.cs" />
     <Compile Include="CollectionView\HorizontalTemplatedHeaderView.cs" />
     <Compile Include="CollectionView\IItemsViewSource.cs" />

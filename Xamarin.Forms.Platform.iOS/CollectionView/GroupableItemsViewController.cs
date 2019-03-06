@@ -8,18 +8,23 @@ namespace Xamarin.Forms.Platform.iOS
 	public class GroupableItemsViewController : SelectableItemsViewController
 	{
 		GroupableItemsView GroupableItemsView => (GroupableItemsView)ItemsView;
-		
+
+		// Keep a cached value for the current state of grouping around so we can avoid hitting the 
+		// BindableProperty all the time 
+		bool _isGroupingEnabled;
+
 		public GroupableItemsViewController(GroupableItemsView groupableItemsView, ItemsViewLayout layout) 
 			: base(groupableItemsView, layout)
 		{
+			_isGroupingEnabled = GroupableItemsView.IsGroupingEnabled;
 			Delegator.GroupableItemsViewController = this;
 		}
 
 		public override nint NumberOfSections(UICollectionView collectionView)
 		{
-			if (!GroupableItemsView.IsGroupingEnabled)
+			if (!_isGroupingEnabled)
 			{
-				return 1;
+				return ItemsSource.ItemCount > 0 ? 1 : 0;
 			}
 
 			return ItemsSource.GroupCount;
@@ -27,12 +32,19 @@ namespace Xamarin.Forms.Platform.iOS
 
 		protected override IItemsViewSource CreateItemsViewSource()
 		{
-			if (GroupableItemsView.IsGroupingEnabled)
+			// Use the BindableProperty here (instead of _isGroupingEnabled) because the cached value might not be set yet
+			if (GroupableItemsView.IsGroupingEnabled) 
 			{
 				return ItemsSourceFactory.CreateGrouped(GroupableItemsView.ItemsSource, CollectionView);
 			}
 
 			return base.CreateItemsViewSource();
+		}
+
+		public override void UpdateItemsSource()
+		{
+			_isGroupingEnabled = GroupableItemsView.IsGroupingEnabled;
+			base.UpdateItemsSource();
 		}
 
 		// TODO hartez Maybe change this to registerviewtypes or something
@@ -141,35 +153,32 @@ namespace Xamarin.Forms.Platform.iOS
 				: VerticalTemplatedSupplementalView.ReuseId;
 		}
 
-		// TODO hartez These next two methods can turn headers/footers on/off by returning CGSize.Empty; need to be checking
-		// IsGroupingEnabled here to do that
-
 		internal CGSize GetReferenceSizeForHeader(UICollectionView collectionView, UICollectionViewLayout layout, nint section)
 		{
-			if (!GroupableItemsView.IsGroupingEnabled)
+			if (!_isGroupingEnabled)
 			{
 				return CGSize.Empty;
 			}
 
-			// TODO hartez This will fully measure every header, but possibly twice, which is not amazing for performance
-			// Verify that this is a double measure, and if so see if we can find a way around it
-			// Long-term, we might be looking at more performance hints for headers/footers (if the dev knows for sure they'll 
-			// all the be the same size)
-			var cell = GetViewForSupplementaryElement(collectionView, UICollectionElementKindSectionKey.Header, NSIndexPath.FromItemSection(0, section)) as ItemsViewCell;
+			// Currently we explicitly measure all of the headers/footers 
+			// Long-term, we might want to look at performance hints (similar to ItemSizingStrategy) for 
+			// headers/footers (if the dev knows for sure they'll all the be the same size)
+
+			var cell = GetViewForSupplementaryElement(collectionView, UICollectionElementKindSectionKey.Header, 
+				NSIndexPath.FromItemSection(0, section)) as ItemsViewCell;
 
 			return cell.Measure();
 		}
 
 		internal CGSize GetReferenceSizeForFooter(UICollectionView collectionView, UICollectionViewLayout layout, nint section)
 		{
-			// TODO ezhart Instead of hitting the BP every time, we should cache _isGrouped locally
-			// Should be easy to do from the GroupableItemsViewRenderer property changed handler
-			if (!GroupableItemsView.IsGroupingEnabled)
+			if (!_isGroupingEnabled)
 			{
 				return CGSize.Empty;
 			}
 
-			var cell = GetViewForSupplementaryElement(collectionView, UICollectionElementKindSectionKey.Footer, NSIndexPath.FromItemSection(0, section)) as ItemsViewCell;
+			var cell = GetViewForSupplementaryElement(collectionView, UICollectionElementKindSectionKey.Footer, 
+				NSIndexPath.FromItemSection(0, section)) as ItemsViewCell;
 
 			return cell.Measure();
 		}

@@ -16,6 +16,8 @@ namespace Xamarin.Forms.Controls.GalleryPages.CollectionViewGalleries.GroupingGa
 	{
 		// TODO ezhart and a gallery that allows moving items and has grouping (groupable observable items sources)
 
+		// TODO ezhart We need a test of grouping that also uses the itemsizingstrategy measurefirst to verify that works (check ios 10 especially)
+
 		public BasicGrouping ()
 		{
 			InitializeComponent ();
