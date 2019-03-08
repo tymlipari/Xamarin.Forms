@@ -47,10 +47,9 @@ namespace Xamarin.Forms.Platform.iOS
 			base.UpdateItemsSource();
 		}
 
-		// TODO hartez Maybe change this to registerviewtypes or something
-		protected override void RegisterCells()
+		protected override void RegisterViewTypes()
 		{
-			base.RegisterCells();
+			base.RegisterViewTypes();
 
 			RegisterSupplementaryViews(UICollectionElementKindSection.Header);
 			RegisterSupplementaryViews(UICollectionElementKindSection.Footer);

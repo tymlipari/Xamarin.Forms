@@ -100,7 +100,7 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			base.ViewDidLoad();
 			AutomaticallyAdjustsScrollViewInsets = false;
-			RegisterCells();
+			RegisterViewTypes();
 		}
 
 		public override void ViewWillLayoutSubviews()
@@ -236,7 +236,7 @@ namespace Xamarin.Forms.Platform.iOS
 			return GetCell(CollectionView, indexPath);
 		}
 
-		protected virtual void RegisterCells()
+		protected virtual void RegisterViewTypes()
 		{
 			CollectionView.RegisterClassForCell(typeof(HorizontalDefaultCell), HorizontalDefaultCell.ReuseId);
 			CollectionView.RegisterClassForCell(typeof(VerticalDefaultCell), VerticalDefaultCell.ReuseId);
