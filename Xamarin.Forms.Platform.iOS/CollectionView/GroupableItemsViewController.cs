@@ -17,7 +17,6 @@ namespace Xamarin.Forms.Platform.iOS
 			: base(groupableItemsView, layout)
 		{
 			_isGroupingEnabled = GroupableItemsView.IsGroupingEnabled;
-			Delegator.GroupableItemsViewController = this;
 		}
 
 		public override nint NumberOfSections(UICollectionView collectionView)

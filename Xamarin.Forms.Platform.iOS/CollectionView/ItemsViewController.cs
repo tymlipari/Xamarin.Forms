@@ -38,7 +38,7 @@ namespace Xamarin.Forms.Platform.iOS
 
 			// If we're updating from a previous layout, we should keep any settings for the SelectableItemsViewController around
 			var selectableItemsViewController = Delegator?.SelectableItemsViewController;
-			Delegator = new UICollectionViewDelegator(_layout, this);
+			Delegator = new UICollectionViewDelegator(ItemsViewLayout, this);
 
 			CollectionView.Delegate = Delegator;
 			if (CollectionView.CollectionViewLayout != ItemsViewLayout)
@@ -163,10 +163,10 @@ namespace Xamarin.Forms.Platform.iOS
 		void ApplyTemplateAndDataContext(TemplatedCell cell, NSIndexPath indexPath)
 		{
 			// We need to create a renderer, which means we need a template
-			var view = _itemsView.ItemTemplate.CreateContent() as View;
-			_itemsView.AddLogicalChild(view);
+			var view = ItemsView.ItemTemplate.CreateContent() as View;
+			ItemsView.AddLogicalChild(view);
 			var renderer = CreateRenderer(view);
-			BindableObject.SetInheritedBindingContext(view, _itemsSource[indexPath.Row]);
+			BindableObject.SetInheritedBindingContext(view, ItemsSource[indexPath]);
 			cell.SetRenderer(renderer);
 		}
 
@@ -177,7 +177,7 @@ namespace Xamarin.Forms.Platform.iOS
 				var oldView = templatedCell.VisualElementRenderer?.Element;
 				if (oldView != null)
 				{
-					_itemsView.RemoveLogicalChild(oldView);
+					ItemsView.RemoveLogicalChild(oldView);
 				}
 			}
 		}
@@ -266,7 +266,7 @@ namespace Xamarin.Forms.Platform.iOS
 			}
 
 			// If the empty view is being displayed, we might need to update it
-			UpdateEmptyViewVisibility(_itemsSource?.Count == 0);
+			UpdateEmptyViewVisibility(ItemsSource?.ItemCount == 0);
 		}
 
 		void UpdateEmptyViewVisibility(bool isEmpty)

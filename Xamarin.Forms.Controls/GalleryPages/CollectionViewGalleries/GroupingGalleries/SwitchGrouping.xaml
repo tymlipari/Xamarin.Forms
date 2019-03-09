@@ -8,7 +8,7 @@
 			<StackLayout Orientation="Horizontal">
 				<Label Text="Is Grouping Enabled:"></Label><Switch x:Name="GroupingSwitch" BindingContext="{x:Reference Name=CollectionView}" IsToggled="{Binding IsGroupingEnabled}"></Switch>
 			</StackLayout>
-       		<CollectionView x:Name="CollectionView" ItemsLayout="ListItemsLayout.VerticalList">
+       		<CollectionView x:Name="CollectionView">
 				
 				<CollectionView.ItemTemplate>
 					<DataTemplate>

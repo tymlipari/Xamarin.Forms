@@ -14,6 +14,11 @@ namespace Xamarin.Forms.Platform.iOS
 			get => ItemsViewController as SelectableItemsViewController;
 		}
 
+		public GroupableItemsViewController GroupableItemsViewController
+		{
+			get => ItemsViewController as GroupableItemsViewController;
+		}
+
 		public UICollectionViewDelegator(ItemsViewLayout itemsViewLayout, ItemsViewController itemsViewController)
 		{
 			ItemsViewLayout = itemsViewLayout;
