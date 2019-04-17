@@ -27,15 +27,16 @@ namespace Xamarin.Forms.Platform.Android
         HeaderContainer _headerView;
         AView _rootView;
         Drawable _defaultBackground;
+		ScrollLayoutManager _layoutManager;
 
-        public ShellFlyoutTemplatedContentRenderer(IShellContext shellContext)
+		public ShellFlyoutTemplatedContentRenderer(IShellContext shellContext)
         {
             _shellContext = shellContext;
 
             LoadView(shellContext);
         }
 
-        protected virtual void LoadView(IShellContext shellContext)
+		protected virtual void LoadView(IShellContext shellContext)
         {
             var context = shellContext.AndroidContext;
             var coordinator = LayoutInflater.FromContext(context).Inflate(Resource.Layout.FlyoutContent, null);
@@ -62,7 +63,7 @@ namespace Xamarin.Forms.Platform.Android
             var adapter = new ShellFlyoutRecyclerAdapter(shellContext, OnElementSelected);
             recycler.SetPadding(0, (int)context.ToPixels(20), 0, 0);
             recycler.SetClipToPadding(false);
-            recycler.SetLayoutManager(new LinearLayoutManager(context, (int)Orientation.Vertical, false));
+			recycler.SetLayoutManager(_layoutManager = new ScrollLayoutManager(context, (int)Orientation.Vertical, false) { ScrollVertically = false });
             recycler.SetAdapter(adapter);
 
             var metrics = context.Resources.DisplayMetrics;
@@ -90,13 +91,18 @@ namespace Xamarin.Forms.Platform.Android
 
         protected virtual void OnShellPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == Shell.FlyoutHeaderBehaviorProperty.PropertyName)
-                UpdateFlyoutHeaderBehavior();
-            else if (e.PropertyName == Shell.FlyoutBackgroundColorProperty.PropertyName)
-                UpdateFlyoutBackgroundColor();
+			if (e.PropertyName == Shell.FlyoutHeaderBehaviorProperty.PropertyName)
+				UpdateFlyoutHeaderBehavior();
+			else if (e.PropertyName == Shell.FlyoutBackgroundColorProperty.PropertyName)
+				UpdateFlyoutBackgroundColor();
+			else if (e.Is(Shell.FlyoutVerticalScrollProperty))
+				UpdateVerticalScroll();
         }
 
-        protected virtual void UpdateFlyoutBackgroundColor()
+		void UpdateVerticalScroll()
+			=> _layoutManager.ScrollVertically = _shellContext.Shell.FlyoutVerticalScroll;
+
+		protected virtual void UpdateFlyoutBackgroundColor()
         {
             var color = _shellContext.Shell.FlyoutBackgroundColor;
             if (_defaultBackground == null && color.IsDefault)
@@ -156,14 +162,16 @@ namespace Xamarin.Forms.Platform.Android
                     _shellContext.Shell.PropertyChanged -= OnShellPropertyChanged;
                     _headerView.Dispose();
                     _rootView.Dispose();
-                    _defaultBackground?.Dispose();
+					_layoutManager?.Dispose();
+					_defaultBackground?.Dispose();
                 }
 
                 _defaultBackground = null;
                 _rootView = null;
                 _headerView = null;
                 _shellContext = null;
-                _disposed = true;
+				_layoutManager = null;
+				_disposed = true;
             }
 
             base.Dispose(disposing);
@@ -203,4 +211,14 @@ namespace Xamarin.Forms.Platform.Android
             }
         }
     }
+
+	internal class ScrollLayoutManager : LinearLayoutManager
+	{
+		public bool ScrollVertically { get; set; } = true;
+
+		public ScrollLayoutManager(Context context, int orientation, bool reverseLayout) : base(context, orientation, reverseLayout)
+		{ }
+
+		public override bool CanScrollVertically() => ScrollVertically;
+	}
 }
