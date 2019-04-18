@@ -37,14 +37,22 @@ namespace Xamarin.Forms.Platform.Android
 
         protected virtual void LoadView(IShellContext shellContext)
         {
+
             var context = shellContext.AndroidContext;
             var coordinator = LayoutInflater.FromContext(context).Inflate(Resource.Layout.FlyoutContent, null);
-            var recycler = coordinator.FindViewById<RecyclerView>(Resource.Id.flyoutcontent_recycler);
-            var appBar = coordinator.FindViewById<AppBarLayout>(Resource.Id.flyoutcontent_appbar);
+			var recycler = coordinator.FindViewById<RecyclerView>(Resource.Id.flyoutcontent_recycler);
+			var appBar = coordinator.FindViewById<ViewGroup>(Resource.Id.flyoutcontent_appbar);
 
-            _rootView = coordinator;
+			_rootView = coordinator;
 
-            appBar.AddOnOffsetChangedListener(this);
+			if (recycler == null)
+				recycler = coordinator.FindViewById<RecyclerView>(context.Resources.GetIdentifier("flyoutcontent_recycler", "id", context.PackageName));
+
+			if (appBar == null)
+				appBar = coordinator.FindViewById<ViewGroup>(context.Resources.GetIdentifier("flyoutcontent_appbar", "id", context.PackageName));
+
+
+            (appBar as AppBarLayout)?.AddOnOffsetChangedListener(this);
 
             int actionBarHeight = (int)context.ToPixels(56);
 

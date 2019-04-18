@@ -236,7 +236,7 @@ namespace Xamarin.Forms.Platform.Android
 			var backButtonHandler = Shell.GetBackButtonBehavior(page);
 			toolbar.SetNavigationOnClickListener(this);
 
-			var activity = (FormsAppCompatActivity)context;
+			var activity = (global::Android.Support.V7.App.AppCompatActivity)context.GetActivity();
 
 			if (backButtonHandler != null)
 			{
@@ -248,11 +248,11 @@ namespace Xamarin.Forms.Platform.Android
 			}
 		}
 
-		protected virtual async Task UpdateDrawerArrow(Context context, Toolbar toolbar, DrawerLayout drawerLayout, FormsAppCompatActivity activity)
+		protected virtual async Task UpdateDrawerArrow(Context context, Toolbar toolbar, DrawerLayout drawerLayout, global::Android.Support.V7.App.AppCompatActivity activity)
 		{
 			if (_drawerToggle == null)
 			{
-				_drawerToggle = new ActionBarDrawerToggle((Activity)context, drawerLayout, toolbar,
+				_drawerToggle = new ActionBarDrawerToggle(context.GetActivity(), drawerLayout, toolbar,
 					R.String.Ok, R.String.Ok)
 				{
 					ToolbarNavigationClickListener = this,
@@ -288,7 +288,7 @@ namespace Xamarin.Forms.Platform.Android
 			_drawerToggle.SyncState();
 		}
 
-		protected virtual async Task UpdateDrawerArrowFromBackButtonBehavior(Context context, Toolbar toolbar, DrawerLayout drawerLayout, BackButtonBehavior backButtonHandler, FormsAppCompatActivity activity)
+		protected virtual async Task UpdateDrawerArrowFromBackButtonBehavior(Context context, Toolbar toolbar, DrawerLayout drawerLayout, BackButtonBehavior backButtonHandler, global::Android.Support.V7.App.AppCompatActivity activity)
 		{
 			var behavior = backButtonHandler;
 			var command = behavior.Command;

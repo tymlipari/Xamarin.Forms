@@ -88,7 +88,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 			{
 				if (_platform == null)
 				{
-					if (Context is FormsAppCompatActivity activity)
+					if (Context.GetActivity() is FormsAppCompatActivity activity)
 					{
 						_platform = activity.Platform;
 					}
@@ -745,7 +745,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 		void SetupToolbar()
 		{
 			Context context = Context;
-			var activity = (FormsAppCompatActivity)context;
+			var activity = context.GetActivity();
 
 			AToolbar bar;
 			if (FormsAppCompatActivity.ToolbarResource != 0)
@@ -938,7 +938,7 @@ namespace Xamarin.Forms.Platform.Android.AppCompat
 				return;
 
 			Context context = Context;
-			var activity = (FormsAppCompatActivity)context;
+			var activity = (FormsAppCompatActivity)context.GetActivity();
 			AToolbar bar = _toolbar;
 			ActionBarDrawerToggle toggle = _drawerToggle;
 
