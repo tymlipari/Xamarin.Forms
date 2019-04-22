@@ -33,6 +33,14 @@ namespace Xamarin.Forms.Platform.iOS
 		{
 			if (e.PropertyName == Shell.FlyoutBackgroundColorProperty.PropertyName)
 				UpdateBackgroundColor();
+			else if (e.Is(Shell.FlyoutVerticalScrollProperty))
+				UpdateVerticalScroll();
+		}
+
+		protected virtual void UpdateVerticalScroll()
+		{
+			if (_tableViewController?.TableView != null)
+				_tableViewController.TableView.ScrollEnabled = _shellContext.Shell.FlyoutVerticalScroll;
 		}
 
 		protected virtual void UpdateBackgroundColor()
@@ -77,6 +85,7 @@ namespace Xamarin.Forms.Platform.iOS
 			_blurView.Frame = View.Bounds;
 
 			UpdateBackgroundColor();
+			UpdateVerticalScroll();
 		}
 
 		public override void ViewWillAppear(bool animated)
