@@ -1,12 +1,30 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+<?xml version="1.0" encoding="utf-8" ?>
+<Shell xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Xamarin.Forms.Sandbox.MainPage"
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
-             ios:Page.UseSafeArea="true">
-    <ContentPage.Content>
-        <StackLayout>
-            <Button Text="I am a Button"  />
+            >
+    
+   <Shell.FlyoutHeader>
+        <StackLayout BackgroundColor="White" HeightRequest="200">
+            <Label Text="whatever"></Label>
+            
         </StackLayout>
-    </ContentPage.Content>
-</ContentPage>
+    </Shell.FlyoutHeader>
+    
+    <ContentPage Title="1234">
+        <StackLayout>
+            <Label Text="main content"></Label>
+            </StackLayout>
+    </ContentPage>
+    <ContentPage Title="1234"></ContentPage>
+    <ContentPage Title="1234"></ContentPage>
+    <ContentPage Title="1234"></ContentPage>
+    <ContentPage Title="1234"></ContentPage>
+    <ContentPage Title="1234"></ContentPage>
+    <ContentPage Title="1234"></ContentPage>
+    <ContentPage Title="1234"></ContentPage>
+    <ContentPage Title="1234"></ContentPage>
+    <ContentPage Title="1234"></ContentPage>
+    <ContentPage Title="1234"></ContentPage>
+</Shell>
