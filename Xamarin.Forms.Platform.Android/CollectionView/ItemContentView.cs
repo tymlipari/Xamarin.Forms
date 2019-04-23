@@ -20,7 +20,11 @@ namespace Xamarin.Forms.Platform.Android
 
 		internal void Recycle()
 		{
-			RemoveView(Content.View);
+			if(Content?.View != null)
+			{
+				RemoveView(Content.View);
+			}
+			
 			Content = null;
 		}
 
