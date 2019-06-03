@@ -71,6 +71,29 @@ namespace Xamarin.Forms
 
 			Platform.UWP.Platform.SubscribeAlertsAndActionSheets();
 		}
+
+		public static void InitHeadless(IActivatedEventArgs launchActivatedEventArgs, IEnumerable<Assembly> rendererAssemblies = null)
+		{
+			if (IsInitialized)
+				return;
+
+			Log.Listeners.Add(new DelegateLogListener((c, m) => Debug.WriteLine(LogFormat, c, m)));
+
+			Device.SetIdiom(TargetIdiom.Tablet);
+			Device.SetFlowDirection(GetFlowDirection());
+			Device.PlatformServices = new WindowsPlatformServices(CoreWindow.GetForCurrentThread().Dispatcher);
+			Device.SetFlags(s_flags);
+			Device.Info = new WindowsDeviceInfo();
+
+			ExpressionSearch.Default = new WindowsExpressionSearch();
+
+			Registrar.ExtraAssemblies = rendererAssemblies?.ToArray();
+
+			Registrar.RegisterAll(new[] { typeof(ExportRendererAttribute), typeof(ExportCellAttribute), typeof(ExportImageSourceHandlerAttribute) });
+
+			IsInitialized = true;
+			s_state = launchActivatedEventArgs.PreviousExecutionState;
+		}
 		 
 		static FlowDirection GetFlowDirection()
 		{
